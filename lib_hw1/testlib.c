@@ -64,12 +64,12 @@ int main(int argc, char* argv[]){
             break;
         }
 
-        if(buffer == "create"){//create bitmap, hash, list
+        if(strcmp(buffer,"create") == 0){//create bitmap, hash, list
             scanf("%s", buffer);//create buffer type data structure
-            if(buffer == "bitmap"){//create bitmap
+            if(strcmp(buffer,"bitmap") == 0){//create bitmap
                 int bitsize;
                 scanf("%s", buffer);//bitmap name
-                scanf("%d", bitsize);//bitsize
+                scanf("%d", &bitsize);//bitsize
                 struct bitmap_arr* curr = bitmap_arr_head;
                 struct bitmap_arr* before = bitmap_arr_head;
                 bool create = true;
@@ -104,10 +104,10 @@ int main(int argc, char* argv[]){
                 }
                 
             }
-            else if(buffer == "hashtable"){
+            else if(strcmp(buffer, "hashtable") == 0 ){
                 scanf("%s", buffer);//hashtable name
             }
-            else if(buffer == "list"){
+            else if(strcmp(buffer, "list") == 0 ){
                 scanf("%s", buffer);//list name
             }
         }
