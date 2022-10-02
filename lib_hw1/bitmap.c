@@ -27,11 +27,11 @@ typedef unsigned long elem_type;
 /* From the outside, a bitmap is an array of bits.  From the
    inside, it's an array of elem_type (defined above) that
    simulates an array of bits. */
-struct bitmap
+typedef struct bitmap
   {
     size_t bit_cnt;     /* Number of bits. */
     elem_type *bits;    /* Elements that represent bits. */
-  };
+  }Bitmap;
 
 /* Returns the index of the element that contains the bit
    numbered BIT_IDX. */
@@ -79,18 +79,39 @@ struct bitmap* bitmap_expand(struct bitmap *target_bitmap, size_t size){
   size_t og_size = bitmap_size(target_bitmap);
   size = og_size + size;
   elem_type *newbits = (elem_type*)malloc(sizeof(elem_type)*size);
-
+  printf("before bitmap:");
+  for(size_t i = 0; i < og_size; i++){
+      printf("%zu", (size_t) bitmap_test(target_bitmap, i));
+  }
+  printf("\n");
   if(newbits != NULL){
     for(size_t i = 0; i < og_size; i++){
-        newbits[i] = target_bitmap->bits[i];
+      newbits[i] =  bitmap_test(target_bitmap, i);
+    }
+    
+    for(size_t i = og_size; i < size; i++){
+      newbits[i] =  0;
+    }
+    //
+
+    for(size_t i = 0; i < size; i++){
+        printf("%zu", (size_t) newbits[i]);
     }
 
-    for(size_t i = og_size; i < size; i++){
-      newbits[i] = 0;
+    target_bitmap->bits = realloc(target_bitmap->bits, sizeof(elem_type)*size);
+
+    for(size_t i = 0; i < size; i++){
+      target_bitmap->bits[i] = newbits[i];
     }
-    elem_type *temp = target_bitmap->bits;
-    target_bitmap->bits = newbits;
-    free(temp);
+    //target_bitmap->bits = newbits;
+    target_bitmap->bit_cnt = size;
+    printf("after bitmap:");
+    for(size_t i = 0; i < size; i++){
+        printf("%zu", (size_t) target_bitmap->bits[i]);
+    }
+    printf(" %p", target_bitmap);
+
+    printf("\n");
     return target_bitmap;
   }
   

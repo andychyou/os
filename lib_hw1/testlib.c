@@ -46,6 +46,9 @@ struct bitmap* find_bitmap(char* buffer);
 
 FILE *fp;
 
+//********* 제출전 할 것
+//1. fp대신 stdin로 fscanf 바꿀 것
+
 int main(int argc, char* argv[]){
     
     fp = fopen(argv[1], "r");
@@ -124,6 +127,32 @@ int main(int argc, char* argv[]){
 
         }
 
+        else if(strcmp(buffer, "bitmap_expand") == 0 ){
+            size_t size;
+            fscanf(fp, "%s %zu", buffer, &size);
+            struct bitmap* target_bitmap = find_bitmap(buffer);
+            target_bitmap = bitmap_expand(target_bitmap, size);
+            printf("after func:");
+            for(size_t i = 0; i < bitmap_size(target_bitmap); i++){
+                printf("%zu", (size_t) bitmap_test(target_bitmap, i));
+            }
+            printf(" %p\n", target_bitmap->bits);
+            printf("\n");
+        }
+
+        else if(strcmp(buffer, "bitmap_set_all") == 0){
+            bool contain;
+            fscanf(fp, "%s", buffer);
+            struct bitmap* target_bitmap = find_bitmap(buffer);
+            fscanf(fp, "%s", buffer);
+            if(strcmp(buffer, "true") == 0){
+                contain = true;
+            }
+            else if(strcmp(buffer, "false") == 0){
+                contain = false;
+            }
+            bitmap_set_all(target_bitmap, contain);
+        }
         else if(strcmp(buffer, "bitmap_dump") == 0){
             fscanf(fp, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
