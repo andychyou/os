@@ -43,6 +43,7 @@ int create(char* buffer);
 int dumpdata(char* buffer);
 int delete(char* buffer);
 struct bitmap* find_bitmap(char* buffer);
+struct hash* find_hash(char* buffer);
 
 FILE *fp;
 
@@ -131,19 +132,52 @@ int main(int argc, char* argv[]){
             size_t size;
             fscanf(fp, "%s %zu", buffer, &size);
             struct bitmap* target_bitmap = find_bitmap(buffer);
+        
             target_bitmap = bitmap_expand(target_bitmap, size);
-            printf("after func:");
-            for(size_t i = 0; i < bitmap_size(target_bitmap); i++){
-                printf("%zu", (size_t) bitmap_test(target_bitmap, i));
+
+            struct bitmap_arr* bitmap_arr_temp = bitmap_arr_head;
+            bool bitmap_found = false;
+
+            while(bitmap_arr_temp != NULL){//find bitmap named buffer
+                if(strcmp(bitmap_arr_temp->bitmap_name, buffer) == 0){
+                    bitmap_found = true;
+                    break;
+                }
+                bitmap_arr_temp = bitmap_arr_temp->next;
             }
-            printf(" %p\n", target_bitmap->bits);
-            printf("\n");
+
+            if(bitmap_found)
+                bitmap_arr_temp->bitmap_ = target_bitmap;
         }
 
-        else if(strcmp(buffer, "bitmap_set_all") == 0){
+        else if(strcmp(buffer, "bitmap_flip") == 0 ){
+            size_t idx;
+            fscanf(fp, "%s %zu", buffer, &idx);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            bitmap_flip (target_bitmap, idx);
+        }
+
+        else if(strcmp(buffer, "bitmap_none") == 0 ){
+            size_t start, cnt;
+            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            bitmap_none (target_bitmap,  start,  cnt);
+
+        }
+
+        else if(strcmp(buffer, "bitmap_reset") == 0 ){
+            size_t idx;
+            fscanf(fp, "%s %zu", buffer, &idx);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            bitmap_reset (target_bitmap,  idx);
+        }
+
+        else if(strcmp(buffer, "bitmap_scan_and_flip") == 0 ){
+            size_t start, cnt;
             bool contain;
-            fscanf(fp, "%s", buffer);
-            struct bitmap* target_bitmap = find_bitmap(buffer);
+
+            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
             fscanf(fp, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
@@ -151,8 +185,89 @@ int main(int argc, char* argv[]){
             else if(strcmp(buffer, "false") == 0){
                 contain = false;
             }
-            bitmap_set_all(target_bitmap, contain);
+            bitmap_scan_and_flip (target_bitmap,  start,  cnt, contain);
         }
+
+        else if(strcmp(buffer, "bitmap_scan") == 0 ){
+            size_t start, cnt;
+            bool contain;
+
+            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            fscanf(fp, "%s", buffer);
+            if(strcmp(buffer, "true") == 0){
+                contain = true;
+            }
+            else if(strcmp(buffer, "false") == 0){
+                contain = false;
+            }
+            bitmap_scan (target_bitmap,  start,  cnt, contain);
+        }
+
+        else if(strcmp(buffer, "bitmap_set_all") == 0 ){
+            bool contain;
+
+            fscanf(fp, "%s", buffer);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            fscanf(fp, "%s", buffer);
+            if(strcmp(buffer, "true") == 0){
+                contain = true;
+            }
+            else if(strcmp(buffer, "false") == 0){
+                contain = false;
+            }
+            bitmap_set_all (target_bitmap, contain); 
+        }
+
+        else if(strcmp(buffer, "bitmap_set_multiple") == 0 ){
+            size_t start, cnt;
+            bool contain;
+
+            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            fscanf(fp, "%s", buffer);
+            if(strcmp(buffer, "true") == 0){
+                contain = true;
+            }
+            else if(strcmp(buffer, "false") == 0){
+                contain = false;
+            }
+            bitmap_set_multiple (target_bitmap,  start, cnt, contain) ;
+        }
+
+        else if(strcmp(buffer, "bitmap_set") == 0 ){
+            size_t idx;
+            bool contain;
+
+            fscanf(fp, "%s %zu", buffer, &idx);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            fscanf(fp, "%s", buffer);
+            if(strcmp(buffer, "true") == 0){
+                contain = true;
+            }
+            else if(strcmp(buffer, "false") == 0){
+                contain = false;
+            }
+            bitmap_set (target_bitmap, idx,  contain); 
+
+        }
+
+        else if(strcmp(buffer, "bitmap_test") == 0){
+            size_t idx;
+            fscanf(fp, "%s %zu", buffer, &idx);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            printf("%s\n", bitmap_test(target_bitmap, idx)?"true":"false");
+        }
+
+        else if(strcmp(buffer, "bitmap_size") == 0 ){
+            size_t size;
+
+            fscanf(fp, "%s %zu", buffer, &size);
+            struct bitmap* target_bitmap = find_bitmap(buffer);  
+            
+            printf("%zu\n", (size_t) bitmap_size (target_bitmap)); 
+        }
+
         else if(strcmp(buffer, "bitmap_dump") == 0){
             fscanf(fp, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
@@ -161,6 +276,16 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "delete") == 0){
             fscanf(fp, "%s", buffer);
             delete(buffer);
+        }
+
+        //*************************
+        //2. hash
+
+        else if(strcmp(buffer, "hash_insert") == 0){
+            size_t ele;
+            fscanf(fp,"%s %zu", buffer, &ele);
+            struct hash* target_hash = find_hash(buffer);
+            hash_insert(target_hash, ele);
         }
     }
     
@@ -207,9 +332,68 @@ int create(char* buffer){
     }
     else if(strcmp(buffer, "hashtable") == 0 ){
         fscanf(fp, "%s", buffer);//hashtable name
+
+        struct hash_arr* curr = hash_arr_head;
+        struct hash_arr* before = hash_arr_head;
+        bool create = true;
+
+        while(curr != NULL){
+            if(strcmp(curr->hash_name, buffer) == 0) {
+                create = false;
+                break;
+            }
+            before = curr;
+            curr = curr->next;
+        }
+        if(create){
+            struct hash_arr* new_hash = (struct hash_arr*)(malloc(sizeof(struct hash_arr)));
+            hash_init(new_hash->hastable_, hash_int, NULL, NULL);
+
+            if(before == NULL){//new_bitmap is the first bitmap
+                new_hash->next = NULL;
+                hash_arr_head = new_hash;
+                hash_arr_s = hash_arr_e = 0;
+            }
+
+            else{
+                new_hash->next = curr;
+                before->next = new_hash;                      
+                hash_arr_e++;                  
+            }
+            
+        }
     }
     else if(strcmp(buffer, "list") == 0 ){
         fscanf(fp, "%s", buffer);//list name
+        struct list_arr* curr = list_arr_head;
+        struct list_arr* before = list_arr_head;
+        bool create = true;
+
+        while(curr != NULL){
+            if(strcmp(curr->list_name, buffer) == 0) {
+                create = false;
+                break;
+            }
+            before = curr;
+            curr = curr->next;
+        }
+        if(create){
+            struct list_arr* new_list = (struct list_arr*)(malloc(sizeof(struct list_arr)));
+            list_init(new_list->list_);
+
+            if(before == NULL){//new_bitmap is the first bitmap
+                new_list->next = NULL;
+                list_arr_head = new_list;
+                list_arr_s = list_arr_e = 0;
+            }
+
+            else{
+                new_list->next = curr;
+                before->next = new_list;                      
+                list_arr_e++;                  
+            }
+            
+        }
     }    
     else{
         printf("could not create\n");
@@ -219,29 +403,6 @@ int create(char* buffer){
     return 0;
 }
 
-// int dumpdata(char* buffer){
-//     struct bitmap_arr* bitmap_arr_temp = bitmap_arr_head;
-//     struct hash_arr* hash_arr_temp = hash_arr_head;
-//     struct list_arr* list_arr_temp = list_arr_head;
-//     bool bitmap_found = false;
-
-//     while(bitmap_arr_temp != NULL){//find bitmap named buffer
-//         if(strcmp(bitmap_arr_temp->bitmap_name, buffer) == 0){
-//             bitmap_found = true;
-//             break;
-//         }
-//         bitmap_arr_temp = bitmap_arr_temp->next;
-//     }
-
-//     if(bitmap_found){
-
-//         bitmap_dump (bitmap_arr_temp->bitmap_);
-//         printf("bitmap cnt: %zu", bitmap_size(bitmap_arr_temp->bitmap_));
-//         printf("dumped bitmap");
-//     }
-
-//     return 0;
-// }
 
 int dumpdata(char* buffer){//find bitmap, hash, list with named buffer. search bitmap, hash, list in order
     struct bitmap* target_bitmap = find_bitmap(buffer);
@@ -255,6 +416,17 @@ int dumpdata(char* buffer){//find bitmap, hash, list with named buffer. search b
     }
 
     //find hash
+    struct hash* target_hash = find_hash(buffer);
+    // if(target_hash != NULL){
+    //     struct hash_iterator i;
+    //     hash_first (&i, target_hash);
+    //     while (hash_next (&i))
+    //         {
+    //         struct hash *f = hash_entry (hash_cur (&i), struct hash_elem, list_elem);
+            
+    //         }
+    //     return 0;
+    //}
 
     //find list
 
@@ -291,6 +463,24 @@ struct bitmap* find_bitmap(char* buffer){
 
     if(bitmap_found)
         return bitmap_arr_temp->bitmap_;
+    else
+        return NULL;
+}
+
+struct hash* find_hash(char* buffer){
+    struct hash_arr* hash_arr_temp = hash_arr_head;
+    bool hash_found = false;
+
+    while(hash_arr_temp != NULL){//find hash named buffer
+        if(strcmp(hash_arr_temp->hash_name, buffer) == 0){
+            hash_found = true;
+            break;
+        }
+        hash_arr_temp = hash_arr_temp->next;
+    }
+
+    if(hash_found)
+        return hash_arr_temp->hastable_;
     else
         return NULL;
 }
