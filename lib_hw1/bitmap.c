@@ -76,7 +76,26 @@ last_mask (const struct bitmap *b)
 
 //bitmap_expand
 struct bitmap* bitmap_expand(struct bitmap *target_bitmap, size_t size){
-  int i = 0;
+  size_t og_size = bitmap_size(target_bitmap);
+  size = og_size + size;
+  elem_type *newbits = (elem_type*)malloc(sizeof(elem_type)*size);
+
+  if(newbits != NULL){
+    for(size_t i = 0; i < og_size; i++){
+        newbits[i] = target_bitmap->bits[i];
+    }
+
+    for(size_t i = og_size; i < size; i++){
+      newbits[i] = 0;
+    }
+    elem_type *temp = target_bitmap->bits;
+    target_bitmap->bits = newbits;
+    free(temp);
+    return target_bitmap;
+  }
+  
+  return NULL;
+  
 }
 
 
