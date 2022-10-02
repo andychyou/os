@@ -72,6 +72,16 @@ last_mask (const struct bitmap *b)
   return last_bits ? ((elem_type) 1 << last_bits) - 1 : (elem_type) -1;
 }
 
+
+
+//bitmap_expand
+struct bitmap* bitmap_expand(struct bitmap *target_bitmap, size_t size){
+  int i = 0;
+}
+
+
+
+
 /* Creation and destruction. */
 
 /* Initializes B to be a bitmap of BIT_CNT bits
