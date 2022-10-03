@@ -189,7 +189,7 @@ int main(int argc, char* argv[]){
             else if(strcmp(buffer, "false") == 0){
                 contain = false;
             }
-            printf("%s\n", bitmap_scan_and_flip (target_bitmap,  start,  cnt, contain)?"true":"false");
+            printf("%zu\n", bitmap_scan_and_flip (target_bitmap,  start,  cnt, contain));
 
         }
 
@@ -207,8 +207,7 @@ int main(int argc, char* argv[]){
                 contain = false;
             }
             
-            printf("%s\n", bitmap_scan (target_bitmap,  start,  cnt, contain)?"true":"false");
-
+            printf("%zu\n", bitmap_scan (target_bitmap,  start,  cnt, contain));
         }
 
         else if(strcmp(buffer, "bitmap_set_all") == 0 ){
