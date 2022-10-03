@@ -298,6 +298,7 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "list_push_front") == 0 ){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
+
             struct list* target_list = find_list(buffer);
             struct list_elem *e = (struct list_elem*) malloc(sizeof(struct list_elem));
             e->prev = &target_list->head;
@@ -316,6 +317,9 @@ int main(int argc, char* argv[]){
             struct list_item *temp = list_entry(e, struct list_item, elem);
             temp->data = i;
             list_push_back (target_list, e);
+
+
+
         }
 
         else if(strcmp(buffer, "list_pop_front") == 0 ){
