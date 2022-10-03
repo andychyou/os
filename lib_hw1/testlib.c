@@ -443,11 +443,10 @@ int create(char* buffer){
         }
         if(create){
             struct list_arr* new_list = (struct list_arr*)(malloc(sizeof(struct list_arr)));
-            struct list* test = NULL;
+            new_list->list_ = (struct list*)malloc(sizeof(struct list));
             printf("try to create\n");
 
-            list_init(test);
-            // list_init(new_list->list_);
+            list_init(new_list->list_);
             printf("created\n");
 
             if(before == NULL){//new_list is the first list
