@@ -74,56 +74,7 @@ last_mask (const struct bitmap *b)
 
 
 
-//bitmap_expand
-// 
-// struct bitmap* bitmap_expand(struct bitmap *target_bitmap, size_t size){
-//   size_t og_size = bitmap_size(target_bitmap);
-//   size = og_size + size;
-//   elem_type *newbits = (elem_type*)malloc(sizeof(elem_type)*size);
-//   printf("before bitmap:");
-//   for(size_t i = 0; i < og_size; i++){
-//       printf("%zu", (size_t) bitmap_test(target_bitmap, i));
-//   }
-//   printf("\n");
-//   if(newbits != NULL){
-//     for(size_t i = 0; i < og_size; i++){
-//       newbits[i] =  bitmap_test(target_bitmap, i);
-//     }
-    
-//     for(size_t i = og_size; i < size; i++){
-//       newbits[i] =  0;
-//     }
-//     //
 
-//     for(size_t i = 0; i < size; i++){
-//         printf("%zu", (size_t) newbits[i]);
-//     }
-//     printf("\n");
-
-//     printf("before bitmap adrs: %p\n", target_bitmap);
-//     printf("before bits adrs: %p\n", target_bitmap->bits);
-//     target_bitmap->bits = realloc(target_bitmap->bits, sizeof(elem_type)*size);\
-//     printf("after bitmap adrs: %p\n", target_bitmap);
-//     printf("after bits adrs: %p\n", target_bitmap->bits);
-    
-
-//     for(size_t i = 0; i < size; i++){
-//       target_bitmap->bits[i] = newbits[i];
-//     }
-//     //target_bitmap->bits = newbits;
-//     target_bitmap->bit_cnt = size;
-//     printf("after bitmap:");
-//     for(size_t i = 0; i < size; i++){
-//         printf("%zu", (size_t) target_bitmap->bits[i]);
-//     }
-
-//     printf("\n");
-//     return target_bitmap;
-//   }
-  
-//   return NULL;
-  
-// }
 
 struct bitmap* bitmap_expand(struct bitmap *target_bitmap, size_t size){
   size_t og_size = bitmap_size(target_bitmap);

@@ -115,6 +115,11 @@ struct list
         ((STRUCT *) ((uint8_t *) &(LIST_ELEM)->next     \
                      - offsetof (STRUCT, MEMBER.next)))
 
+//user defined
+void list_shuffle(struct list* target_list);
+void list_swap(struct list_elem *a, struct list_elem *b);
+
+
 void list_init (struct list *);
 
 /* List traversal. */

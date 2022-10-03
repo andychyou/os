@@ -1,5 +1,8 @@
 #include "list.h"
 #include <assert.h>	// Instead of	#include "../debug.h"
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define ASSERT(CONDITION) assert(CONDITION)	// patched for proj0-2
 
 /* Our doubly linked lists have two header elements: the "head"
@@ -31,6 +34,50 @@
    without sacrificing this simplicity.  But using two separate
    elements allows us to do a little bit of checking on some
    operations, which can be valuable.) */
+
+
+
+//user defined
+void list_swap(struct list_elem *a, struct list_elem *b){
+  if(a != b){
+    struct list_elem* b_right = b->next;
+    if(b_right == a){
+      list_remove(b);
+      list_insert(a->next, b);
+    }
+    else{
+      list_remove(b);
+      list_insert(a->next, b);
+      list_remove(a);
+      list_insert(b_right, a);
+    }
+  }
+}
+
+void list_shuffle(struct list* target_list){
+  srand(time(NULL));
+  int si = list_size(target_list);
+  for(int i =0; i < si; i++){
+    int r = rand() % si;
+    struct list_elem* e;
+    struct list_elem *temp1;
+    struct list_elem *temp2;
+    int cnt = 0;
+    for (e = list_begin (target_list); cnt < i; e = list_next (e)){
+      cnt++;
+    }
+    temp1 = e;
+    cnt = 0;
+    for (e = list_begin (target_list); cnt < r; e = list_next (e)){
+      cnt++;
+    }
+    temp2 = e;
+    list_swap(temp1, temp2);
+  }
+}
+
+
+
 
 static bool is_sorted (struct list_elem *a, struct list_elem *b,
                        list_less_func *less, void *aux);// Remove KERNEL MACRO 'UNUSED';
