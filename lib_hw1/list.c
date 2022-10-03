@@ -61,6 +61,7 @@ is_tail (struct list_elem *elem)
 void
 list_init (struct list *list)
 {
+
   ASSERT (list != NULL);
   list->head.prev = NULL;
   list->head.next = &list->tail;

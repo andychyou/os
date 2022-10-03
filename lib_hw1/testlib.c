@@ -18,9 +18,9 @@ struct bitmap_arr{
 };
 
 struct hash_arr{
-    struct hastable* hastable_;
+    struct hash* hash_;
     char hash_name[10];
-    struct hashtable_arr* next;
+    struct hash_arr* next;
 };
 
 struct list_arr{
@@ -44,6 +44,7 @@ int dumpdata(char* buffer);
 int delete(char* buffer);
 struct bitmap* find_bitmap(char* buffer);
 struct hash* find_hash(char* buffer);
+struct list* find_list(char* buffer);
 
 FILE *fp;
 
@@ -282,10 +283,73 @@ int main(int argc, char* argv[]){
         //2. hash
 
         else if(strcmp(buffer, "hash_insert") == 0){
-            size_t ele;
-            fscanf(fp,"%s %zu", buffer, &ele);
-            struct hash* target_hash = find_hash(buffer);
-            hash_insert(target_hash, ele);
+            // size_t ele;
+            // fscanf(fp,"%s %zu", buffer, &ele);
+            // struct hash* target_hash = find_hash(buffer);
+            // hash_insert(target_hash, ele);
+        }
+
+        //*************************
+        //3. list
+
+        else if(strcmp(buffer, "list_push_front") == 0 ){
+            int i;
+            fscanf(fp, "%s %d", buffer, &i);
+            struct list* target_list = find_list(buffer);
+            struct list_elem *e = list_begin(target_list);
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            temp->data = i;
+            list_push_front (target_list, e);
+
+        }
+
+        else if(strcmp(buffer, "list_push_back") == 0 ){
+            int i;
+            fscanf(fp, "%s %d", buffer, &i);
+            struct list* target_list = find_list(buffer);
+            struct list_elem *e = list_begin(target_list);
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            temp->data = i;
+            list_push_back (target_list, e);
+
+        }
+
+        else if(strcmp(buffer, "list_pop_front") == 0 ){
+            int i;
+            fscanf(fp, "%s %d", buffer, &i);
+            struct list* target_list = find_list(buffer);
+            struct list_elem *e = list_begin(target_list);
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            temp->data = i;
+            list_pop_front (target_list);
+
+        }
+
+        else if(strcmp(buffer, "list_pop_back") == 0 ){
+            int i;
+            fscanf(fp, "%s %d", buffer, &i);
+            struct list* target_list = find_list(buffer);
+            struct list_elem *e = list_begin(target_list);
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            temp->data = i;
+            list_pop_back (target_list);
+
+        }
+
+        else if(strcmp(buffer, "list_front") == 0 ){
+            fscanf(fp, "%s", buffer);
+            struct list* target_list = find_list(buffer);
+            struct list_elem *e = list_front(target_list);
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            printf("%d\n", temp->data);
+        }
+
+        else if(strcmp(buffer, "list_back") == 0 ){
+            fscanf(fp, "%s", buffer);
+            struct list* target_list = find_list(buffer);
+            struct list_elem *e = list_back(target_list);
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            printf("%d\n", temp->data);
         }
     }
     
@@ -346,20 +410,20 @@ int create(char* buffer){
             curr = curr->next;
         }
         if(create){
-            struct hash_arr* new_hash = (struct hash_arr*)(malloc(sizeof(struct hash_arr)));
-            hash_init(new_hash->hastable_, hash_int, NULL, NULL);
+            // struct hash_arr* new_hash = (struct hash_arr*)(malloc(sizeof(struct hash_arr)));
+            // hash_init(new_hash->hash_, hash_int, NULL, NULL);
 
-            if(before == NULL){//new_bitmap is the first bitmap
-                new_hash->next = NULL;
-                hash_arr_head = new_hash;
-                hash_arr_s = hash_arr_e = 0;
-            }
+            // if(before == NULL){//new_bitmap is the first bitmap
+            //     new_hash->next = NULL;
+            //     hash_arr_head = new_hash;
+            //     hash_arr_s = hash_arr_e = 0;
+            // }
 
-            else{
-                new_hash->next = curr;
-                before->next = new_hash;                      
-                hash_arr_e++;                  
-            }
+            // else{
+            //     new_hash->next = curr;
+            //     before->next = new_hash;                      
+            //     hash_arr_e++;                  
+            // }
             
         }
     }
@@ -379,9 +443,14 @@ int create(char* buffer){
         }
         if(create){
             struct list_arr* new_list = (struct list_arr*)(malloc(sizeof(struct list_arr)));
-            list_init(new_list->list_);
+            struct list* test = NULL;
+            printf("try to create\n");
 
-            if(before == NULL){//new_bitmap is the first bitmap
+            list_init(test);
+            // list_init(new_list->list_);
+            printf("created\n");
+
+            if(before == NULL){//new_list is the first list
                 new_list->next = NULL;
                 list_arr_head = new_list;
                 list_arr_s = list_arr_e = 0;
@@ -429,23 +498,87 @@ int dumpdata(char* buffer){//find bitmap, hash, list with named buffer. search b
     //}
 
     //find list
-
+    struct list* target_list = find_list(buffer);
+    if(target_list != NULL){
+        struct list_elem* e;
+        for (e = list_begin (target_list); e != list_end (target_list); e = list_remove (e))
+        {
+            struct list_item *temp = list_entry(e, struct list_item, elem);
+            printf("%d ", temp->data);
+        }
+        printf("\n");
+        return 0;
+    }
     return -1; //can't find
 }
 
 
 int delete(char* buffer){//find bitmap, hash, list with named buffer. search bitmap, hash, list in order
-    struct bitmap* target_bitmap = find_bitmap(buffer);
-    if(target_bitmap != NULL){
 
-        bitmap_destroy(target_bitmap);
-        return 0;
+    struct bitmap_arr* bitmap_arr_curr = bitmap_arr_head;
+    struct bitmap_arr* bitmap_arr_prev = bitmap_arr_head;
+    bool bitmap_found = false;
+
+    while(bitmap_arr_curr != NULL){//find bitmap named buffer
+        if(strcmp(bitmap_arr_curr->bitmap_name, buffer) == 0){
+            bitmap_found = true;
+            break;
+        }
+        bitmap_arr_prev = bitmap_arr_curr;
+        bitmap_arr_curr = bitmap_arr_curr->next;
     }
 
+    if(bitmap_found){
+        if(bitmap_arr_curr == bitmap_arr_prev){//delete first node
+            bitmap_arr_head = bitmap_arr_curr->next;
+            free(bitmap_arr_curr);
+            bitmap_arr_curr = NULL;
+        }
+        else{//delete from second node
+            bitmap_arr_prev->next = bitmap_arr_curr->next;
+            //bitmap_destroy(bitmap_arr_curr->bitmap_);
+            //free(bitmap_arr_curr->next);
+            free(bitmap_arr_curr);
+            bitmap_arr_curr = NULL;
+        }
+        
+        return 0;
+    }
+        
+
+  
     //find hash
 
     //find list
+    struct list_arr* list_arr_curr = list_arr_head;
+    struct list_arr* list_arr_prev = list_arr_head;
+    bool list_found = false;
 
+    while(list_arr_curr != NULL){//find list named buffer
+        if(strcmp(list_arr_curr->list_name, buffer) == 0){
+            list_found = true;
+            break;
+        }
+        list_arr_prev = list_arr_curr;
+        list_arr_curr = list_arr_curr->next;
+    }
+
+    if(list_found){
+        if(list_arr_curr == list_arr_prev){//delete first node
+            list_arr_head = list_arr_curr->next;
+            free(list_arr_curr);
+            list_arr_curr = NULL;
+        }
+        else{//delete from second node
+            list_arr_prev->next = list_arr_curr->next;
+            //list_destroy(list_arr_curr->list_);
+            //free(list_arr_curr->next);
+            free(list_arr_curr);
+            list_arr_curr = NULL;
+        }
+        
+        return 0;
+    }
     return -1; //can't find
 }
 
@@ -480,7 +613,26 @@ struct hash* find_hash(char* buffer){
     }
 
     if(hash_found)
-        return hash_arr_temp->hastable_;
+        return hash_arr_temp->hash_;
+    else
+        return NULL;
+}
+
+
+struct list* find_list(char* buffer){
+    struct list_arr* list_arr_temp = list_arr_head;
+    bool list_found = false;
+
+    while(list_arr_temp != NULL){//find list named buffer
+        if(strcmp(list_arr_temp->list_name, buffer) == 0){
+            list_found = true;
+            break;
+        }
+        list_arr_temp = list_arr_temp->next;
+    }
+
+    if(list_found)
+        return list_arr_temp->list_;
     else
         return NULL;
 }

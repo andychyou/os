@@ -3,20 +3,14 @@
 #include <time.h>
 #include <string.h>
 
+#include "list.h"
 
-int* arrinc(int* arr){
-    for(int i = 0; i < 20; i++){
-        arr[i] = 1;
-    }
-    return arr;
-}
+
 
 int main(){
 
-    int arr[20];
-    for(int i = 0; i < 20; i++){
-        arr[i] = i;
-    }
+    struct list* newlist;
+    list_init(newlist);
 
     return 0;
 }
