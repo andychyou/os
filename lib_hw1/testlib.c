@@ -46,19 +46,19 @@ struct bitmap* find_bitmap(char* buffer);
 struct hash* find_hash(char* buffer);
 struct list* find_list(char* buffer);
 
-FILE *fp;
+// FILE *stdin;
 
 //********* 제출전 할 것
-//1. fp대신 stdin로 fscanf 바꿀 것
+//1. stdin대신 stdin로 fscanf 바꿀 것
 
 int main(int argc, char* argv[]){
     
-    //fp = fopen(argv[1], "r");
-    fp = fopen(".././os_hw1_tester/list_shuffle.in", "r");
+    //stdin = fopen(argv[1], "r");
+    // stdin = fopen(".././os_hw1_tester/bitmap_scan_and_flip.in", "r");
 
-    char buffer[26];
+    char buffer[30];
 
-    while(fscanf(fp, "%s", buffer) != EOF){
+    while(fscanf(stdin, "%s", buffer) != EOF){
     
       
         if(strcmp(buffer, "quit") == 0 || strcmp(buffer, "quit\n") == 0){
@@ -66,46 +66,46 @@ int main(int argc, char* argv[]){
         }
 
         else if(strcmp(buffer,"create") == 0){//create bitmap, hash, list
-            fscanf(fp, "%s", buffer);//create buffer type data structure
+            fscanf(stdin, "%s", buffer);//create buffer type data structure
             create(buffer);
         }
 
         else if(strcmp(buffer, "dumpdata") == 0){//dumpdata bitmap, hash, list
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             dumpdata(buffer);
         }
 
         else if(strcmp(buffer, "bitmap_mark") == 0){//dumpdata bitmap, hash, list
             size_t idx;
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
-            fscanf(fp,"%zu", &idx);
+            fscanf(stdin,"%zu", &idx);
             bitmap_mark(target_bitmap, idx);
         }
 
         else if(strcmp(buffer, "bitmap_all") == 0){
             size_t start, cnt;
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
-            fscanf(fp, "%zu %zu", &start, &cnt);
+            fscanf(stdin, "%zu %zu", &start, &cnt);
             printf("%s\n", bitmap_all(target_bitmap, start, cnt)?"true":"false");
         }
         
         else if(strcmp(buffer, "bitmap_any") == 0){
             size_t start, cnt;
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
-            fscanf(fp, "%zu %zu", &start, &cnt);
+            fscanf(stdin, "%zu %zu", &start, &cnt);
             printf("%s\n", bitmap_any(target_bitmap, start, cnt)?"true":"false");
         }
 
         else if(strcmp(buffer, "bitmap_contains") == 0){
             size_t start, cnt;
             bool contain;
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
-            fscanf(fp, "%zu %zu", &start, &cnt);
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%zu %zu", &start, &cnt);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
@@ -118,10 +118,10 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "bitmap_count") == 0){
             size_t start, cnt;
             bool contain;
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
-            fscanf(fp, "%zu %zu", &start, &cnt);
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%zu %zu", &start, &cnt);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "bitmap_expand") == 0 ){
             size_t size;
-            fscanf(fp, "%s %zu", buffer, &size);
+            fscanf(stdin, "%s %zu", buffer, &size);
             struct bitmap* target_bitmap = find_bitmap(buffer);
         
             target_bitmap = bitmap_expand(target_bitmap, size);
@@ -156,22 +156,22 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "bitmap_flip") == 0 ){
             size_t idx;
-            fscanf(fp, "%s %zu", buffer, &idx);
+            fscanf(stdin, "%s %zu", buffer, &idx);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
             bitmap_flip (target_bitmap, idx);
         }
 
         else if(strcmp(buffer, "bitmap_none") == 0 ){
             size_t start, cnt;
-            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            fscanf(stdin, "%s %zu %zu", buffer, &start, &cnt);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
-            bitmap_none (target_bitmap,  start,  cnt);
+            printf("%s\n", bitmap_none (target_bitmap,  start,  cnt)?"true":"false");
 
         }
 
         else if(strcmp(buffer, "bitmap_reset") == 0 ){
             size_t idx;
-            fscanf(fp, "%s %zu", buffer, &idx);
+            fscanf(stdin, "%s %zu", buffer, &idx);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
             bitmap_reset (target_bitmap,  idx);
         }
@@ -180,40 +180,43 @@ int main(int argc, char* argv[]){
             size_t start, cnt;
             bool contain;
 
-            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            fscanf(stdin, "%s %zu %zu", buffer, &start, &cnt);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
             else if(strcmp(buffer, "false") == 0){
                 contain = false;
             }
-            bitmap_scan_and_flip (target_bitmap,  start,  cnt, contain);
+            printf("%s\n", bitmap_scan_and_flip (target_bitmap,  start,  cnt, contain)?"true":"false");
+
         }
 
         else if(strcmp(buffer, "bitmap_scan") == 0 ){
             size_t start, cnt;
             bool contain;
 
-            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            fscanf(stdin, "%s %zu %zu", buffer, &start, &cnt);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
             else if(strcmp(buffer, "false") == 0){
                 contain = false;
             }
-            bitmap_scan (target_bitmap,  start,  cnt, contain);
+            
+            printf("%s\n", bitmap_scan (target_bitmap,  start,  cnt, contain)?"true":"false");
+
         }
 
         else if(strcmp(buffer, "bitmap_set_all") == 0 ){
             bool contain;
 
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
@@ -227,9 +230,9 @@ int main(int argc, char* argv[]){
             size_t start, cnt;
             bool contain;
 
-            fscanf(fp, "%s %zu %zu", buffer, &start, &cnt);
+            fscanf(stdin, "%s %zu %zu", buffer, &start, &cnt);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
@@ -243,9 +246,9 @@ int main(int argc, char* argv[]){
             size_t idx;
             bool contain;
 
-            fscanf(fp, "%s %zu", buffer, &idx);
+            fscanf(stdin, "%s %zu", buffer, &idx);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             if(strcmp(buffer, "true") == 0){
                 contain = true;
             }
@@ -258,7 +261,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "bitmap_test") == 0){
             size_t idx;
-            fscanf(fp, "%s %zu", buffer, &idx);
+            fscanf(stdin, "%s %zu", buffer, &idx);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
             printf("%s\n", bitmap_test(target_bitmap, idx)?"true":"false");
         }
@@ -266,19 +269,19 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "bitmap_size") == 0 ){
             size_t size;
 
-            fscanf(fp, "%s %zu", buffer, &size);
+            fscanf(stdin, "%s %zu", buffer, &size);
             struct bitmap* target_bitmap = find_bitmap(buffer);  
             
             printf("%zu\n", (size_t) bitmap_size (target_bitmap)); 
         }
 
         else if(strcmp(buffer, "bitmap_dump") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct bitmap* target_bitmap = find_bitmap(buffer);
             bitmap_dump(target_bitmap);
         }
         else if(strcmp(buffer, "delete") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             delete(buffer);
         }
 
@@ -287,7 +290,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "hash_insert") == 0){
             // size_t ele;
-            // fscanf(fp,"%s %zu", buffer, &ele);
+            // fscanf(stdin,"%s %zu", buffer, &ele);
             // struct hash* target_hash = find_hash(buffer);
             // hash_insert(target_hash, ele);
         }
@@ -297,7 +300,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_push_front") == 0 ){
             int i;
-            fscanf(fp, "%s %d", buffer, &i);
+            fscanf(stdin, "%s %d", buffer, &i);
 
             struct list* target_list = find_list(buffer);
             struct list_elem *e = (struct list_elem*) malloc(sizeof(struct list_elem));
@@ -310,7 +313,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_push_back") == 0 ){
             int i;
-            fscanf(fp, "%s %d", buffer, &i);
+            fscanf(stdin, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
             struct list_elem *e = (struct list_elem*) malloc(sizeof(struct list_elem));
             e->next = &target_list->tail;
@@ -324,7 +327,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_pop_front") == 0 ){
             int i;
-            fscanf(fp, "%s %d", buffer, &i);
+            fscanf(stdin, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
             struct list_elem* e = list_pop_front(target_list);
 
@@ -332,13 +335,13 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_pop_back") == 0 ){
             int i;
-            fscanf(fp, "%s %d", buffer, &i);
+            fscanf(stdin, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
             struct list_elem* e = list_pop_back(target_list);
 
         }
         else if(strcmp(buffer, "list_front") == 0 ){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             struct list_elem *e = list_front(target_list);
             struct list_item *temp = list_entry(e, struct list_item, elem);
@@ -346,7 +349,7 @@ int main(int argc, char* argv[]){
         }
 
         else if(strcmp(buffer, "list_back") == 0 ){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             struct list_elem *e = list_back(target_list);
             struct list_item *temp = list_entry(e, struct list_item, elem);
@@ -355,7 +358,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_insert_ordered") == 0){
             int val;
-            fscanf(fp, "%s %d", buffer, &val);
+            fscanf(stdin, "%s %d", buffer, &val);
             struct list* target_list = find_list(buffer);
             struct list_elem* e = (struct list_elem*)malloc(sizeof(struct list_elem));
             list_insert_ordered (target_list, e, NULL, 0);//help
@@ -363,7 +366,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_insert") == 0){
             int i, val;
-            fscanf(fp, "%s %d %d", buffer, &i, &val);
+            fscanf(stdin, "%s %d %d", buffer, &i, &val);
             struct list* target_list = find_list(buffer);
             struct list_elem* e;
             struct list_elem* new = (struct list_elem*)malloc(sizeof(struct list_elem));
@@ -378,36 +381,36 @@ int main(int argc, char* argv[]){
         }
 
         else if(strcmp(buffer, "list_empty") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             printf("%s\n", list_empty(target_list)?"true":"false");      
         }
 
         else if(strcmp(buffer, "list_size") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             printf("%zu\n", list_size(target_list));      
         }
 
         else if(strcmp(buffer, "list_max") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             struct list_elem* e = list_max(target_list, NULL, 0); //help
             struct list_item* temp = list_entry(e, struct list_item, elem);
-            printf("%zu\n", temp->data);     
+            printf("%d\n", temp->data);     
         }
 
         else if(strcmp(buffer, "list_min") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             struct list_elem* e = list_min(target_list, NULL, 0); //help
             struct list_item* temp = list_entry(e, struct list_item, elem);
-            printf("%zu\n", temp->data);     
+            printf("%d\n", temp->data);     
         }
 
         else if(strcmp(buffer, "list_remove") == 0){
             int i;
-            fscanf(fp, "%s %d", buffer, &i);
+            fscanf(stdin, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
 
             int cnt = 0;
@@ -421,22 +424,22 @@ int main(int argc, char* argv[]){
         }
 
         else if(strcmp(buffer, "list_reverse") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             list_reverse(target_list);
         }
 
         else if(strcmp(buffer, "list_shuffle") == 0){
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             struct list* target_list = find_list(buffer);
             list_shuffle(target_list);
         }
 
         else if(strcmp(buffer, "list_splice") == 0){
             int bf, s, e;
-            fscanf(fp, "%s %d", buffer, &bf);
+            fscanf(stdin, "%s %d", buffer, &bf);
             struct list* target_list1 = find_list(buffer);
-            fscanf(fp, "%s %d %d", buffer, &s, &e);
+            fscanf(stdin, "%s %d %d", buffer, &s, &e);
             struct list* target_list2 = find_list(buffer);
             struct list_elem* before, *first, *last, *temp;
             int cnt = 0;
@@ -461,7 +464,7 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_swap") == 0){
             int sw1, sw2;
-            fscanf(fp, "%s %d %d", buffer, &sw1, &sw2);
+            fscanf(stdin, "%s %d %d", buffer, &sw1, &sw2);
             struct list* target_list = find_list(buffer);
             struct list_elem* temp1, *temp2, *e;
             int cnt = 0;
@@ -481,9 +484,9 @@ int main(int argc, char* argv[]){
 
         else if(strcmp(buffer, "list_unique") == 0){
             struct list* list1, *list2;
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             list1 = find_list(buffer);
-            fscanf(fp, "%s", buffer);
+            fscanf(stdin, "%s", buffer);
             list2 = find_list(buffer);
         void list_unique (struct list *, struct list *duplicates,
                   list_less_func *, void *aux);//help
@@ -496,8 +499,8 @@ int main(int argc, char* argv[]){
 int create(char* buffer){
     if(strcmp(buffer,"bitmap") == 0){//create bitmap
         size_t bitsize;
-        fscanf(fp, "%s", buffer);//bitmap name
-        fscanf(fp, "%zu", &bitsize);//bitsize
+        fscanf(stdin, "%s", buffer);//bitmap name
+        fscanf(stdin, "%zu", &bitsize);//bitsize
         struct bitmap_arr* curr = bitmap_arr_head;
         struct bitmap_arr* before = bitmap_arr_head;
         bool create = true;
@@ -532,7 +535,7 @@ int create(char* buffer){
         }
     }
     else if(strcmp(buffer, "hashtable") == 0 ){
-        fscanf(fp, "%s", buffer);//hashtable name
+        fscanf(stdin, "%s", buffer);//hashtable name
 
         struct hash_arr* curr = hash_arr_head;
         struct hash_arr* before = hash_arr_head;
@@ -565,7 +568,7 @@ int create(char* buffer){
         }
     }
     else if(strcmp(buffer, "list") == 0 ){
-        fscanf(fp, "%s", buffer);//list name
+        fscanf(stdin, "%s", buffer);//list name
         struct list_arr* curr = list_arr_head;
         struct list_arr* before = list_arr_head;
         bool create = true;
