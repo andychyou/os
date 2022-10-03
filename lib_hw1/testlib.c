@@ -58,6 +58,7 @@ int main(int argc, char* argv[]){
     char buffer[20];
 
     while(fscanf(fp, "%s", buffer) != EOF){
+    
 
         if(strcmp(buffer, "quit") == 0 || strcmp(buffer, "quit\n") == 0){
             break;
@@ -296,11 +297,8 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "list_push_front") == 0 ){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
-
             struct list* target_list = find_list(buffer);
-            struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            e = list_begin(target_list);
-
+            struct list_elem *e = (struct list_elem*) malloc(sizeof(struct list_elem));
             struct list_item *temp = list_entry(e, struct list_item, elem);
             temp->data = i;
             list_push_front (target_list, e);
@@ -311,28 +309,18 @@ int main(int argc, char* argv[]){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
-            printf("found list %s %p\n", buffer, target_list);
-            struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            e = list_begin(target_list);
-            printf("did list_begin\n");
-            
+            struct list_elem *e = (struct list_elem*) malloc(sizeof(struct list_elem));
             struct list_item *temp = list_entry(e, struct list_item, elem);
             temp->data = i;
             list_push_back (target_list, e);
-
-
-
         }
 
         else if(strcmp(buffer, "list_pop_front") == 0 ){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
-            struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            e = list_begin(target_list);
-            struct list_item *temp = list_entry(e, struct list_item, elem);
-            temp->data = i;
-            list_pop_front (target_list);
+            struct list_elem* e = list_pop_front(target_list);
+            printf("%d\n", list_entry(e, struct list_item, elem)->data);
 
         }
 
@@ -340,19 +328,14 @@ int main(int argc, char* argv[]){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
-            struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            e = list_begin(target_list);
-            struct list_item *temp = list_entry(e, struct list_item, elem);
-            temp->data = i;
-            list_pop_back (target_list);
+            struct list_elem* e = list_pop_back(target_list);
+            printf("%d\n", list_entry(e, struct list_item, elem)->data);
 
         }
-
         else if(strcmp(buffer, "list_front") == 0 ){
             fscanf(fp, "%s", buffer);
             struct list* target_list = find_list(buffer);
-            struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            e = list_front(target_list);
+            struct list_elem *e = list_front(target_list);
             struct list_item *temp = list_entry(e, struct list_item, elem);
             printf("%d\n", temp->data);
         }
@@ -360,10 +343,17 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "list_back") == 0 ){
             fscanf(fp, "%s", buffer);
             struct list* target_list = find_list(buffer);
-            struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            e = list_back(target_list);
+            struct list_elem *e = list_back(target_list);
             struct list_item *temp = list_entry(e, struct list_item, elem);
             printf("%d\n", temp->data);
+        }
+
+        else if(strcmp(buffer, "list_insert_ordered") == 0){
+            int val;
+            fscanf(fp, "%s %d", buffer, &val);
+            struct list* target_list = find_list(buffer);
+            struct list_elem* e = (struct list_elem*)malloc(sizeof(struct list_elem));
+            list_insert_ordered (target_list, e, list_less_func, 0);
         }
     }
     
@@ -514,26 +504,27 @@ int dumpdata(char* buffer){//find bitmap, hash, list with named buffer. search b
     struct list* target_list = find_list(buffer);
     printf("dump this %p\n", target_list);
     if(target_list != NULL){
-        struct list_elem* e = list_head(target_list);
-        printf("elem %p\n\n", e);
-        printf("elem %d\n\n", list_entry(e, struct list_item, elem)->data);
+        // struct list_elem* e = list_head(target_list);
+        // printf("elem %p\n\n", e);
+        // printf("elem %d\n\n", list_entry(e, struct list_item, elem)->data);
 
-        while ((e = list_next (e)) != list_end (target_list)) 
+        // while ((e = list_next (e)) != list_end (target_list)) 
+        // {
+        //     printf("elem %p\n\n", e);
+
+        //     struct list_item *temp = list_entry(e, struct list_item, elem);
+        //     printf("%d ", temp->data);
+        // }
+        // printf("\n");
+
+        struct list_elem* e;
+        for (e = list_begin (target_list); e != list_end (target_list); e = list_remove (e))
         {
-            printf("elem %p\n\n", e);
-
             struct list_item *temp = list_entry(e, struct list_item, elem);
             printf("%d ", temp->data);
         }
         printf("\n");
 
-        //  e = (struct list_elem*)malloc(sizeof(struct list_elem));
-        // for (e = list_begin (target_list); e != list_end (target_list); e = list_remove (e))
-        // {
-        //     struct list_item *temp = list_entry(e, struct list_item, elem);
-        //     printf("%d ", temp->data);
-        // }
-        // printf("\n");
         return 0;
     }
     return -1; //can't find
