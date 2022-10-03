@@ -58,6 +58,7 @@ int main(int argc, char* argv[]){
     char buffer[20];
 
     while(fscanf(fp, "%s", buffer) != EOF){
+
         if(strcmp(buffer, "quit") == 0 || strcmp(buffer, "quit\n") == 0){
             break;
         }
@@ -295,13 +296,10 @@ int main(int argc, char* argv[]){
         else if(strcmp(buffer, "list_push_front") == 0 ){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
-            printf("try find list\n");
 
             struct list* target_list = find_list(buffer);
-            printf("try list begin\n");
             struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
             e = list_begin(target_list);
-            printf("did list begin\n");
 
             struct list_item *temp = list_entry(e, struct list_item, elem);
             temp->data = i;
@@ -313,14 +311,16 @@ int main(int argc, char* argv[]){
             int i;
             fscanf(fp, "%s %d", buffer, &i);
             struct list* target_list = find_list(buffer);
+            printf("found list %s %p\n", buffer, target_list);
             struct list_elem *e = (struct list_elem*)malloc(sizeof(struct list_elem));
-            printf("try list begin\n");
             e = list_begin(target_list);
-            printf("did list begin\n");
+            printf("did list_begin\n");
             
             struct list_item *temp = list_entry(e, struct list_item, elem);
             temp->data = i;
             list_push_back (target_list, e);
+
+
 
         }
 
@@ -458,16 +458,15 @@ int create(char* buffer){
         if(create){
             struct list_arr* new_list = (struct list_arr*)(malloc(sizeof(struct list_arr)));
             new_list->list_ = (struct list*)malloc(sizeof(struct list));
-            printf("try to create\n");
-
+            strcpy(new_list->list_name, buffer);
             list_init(new_list->list_);
-            printf("new_list %p\n", new_list->list_);
-            printf("created\n");
 
             if(before == NULL){//new_list is the first list
+                
                 new_list->next = NULL;
                 list_arr_head = new_list;
                 list_arr_s = list_arr_e = 0;
+                
             }
 
             else{
@@ -498,7 +497,7 @@ int dumpdata(char* buffer){//find bitmap, hash, list with named buffer. search b
         return 0;
     }
 
-    //find hash
+    //dump hash
     struct hash* target_hash = find_hash(buffer);
     // if(target_hash != NULL){
     //     struct hash_iterator i;
@@ -511,16 +510,30 @@ int dumpdata(char* buffer){//find bitmap, hash, list with named buffer. search b
     //     return 0;
     //}
 
-    //find list
+    //dump list
     struct list* target_list = find_list(buffer);
+    printf("dump this %p\n", target_list);
     if(target_list != NULL){
-        struct list_elem* e = (struct list_elem*)malloc(sizeof(struct list_elem));
-        for (e = list_begin (target_list); e != list_end (target_list); e = list_remove (e))
+        struct list_elem* e = list_head(target_list);
+        printf("elem %p\n\n", e);
+        printf("elem %d\n\n", list_entry(e, struct list_item, elem)->data);
+
+        while ((e = list_next (e)) != list_end (target_list)) 
         {
+            printf("elem %p\n\n", e);
+
             struct list_item *temp = list_entry(e, struct list_item, elem);
             printf("%d ", temp->data);
         }
         printf("\n");
+
+        //  e = (struct list_elem*)malloc(sizeof(struct list_elem));
+        // for (e = list_begin (target_list); e != list_end (target_list); e = list_remove (e))
+        // {
+        //     struct list_item *temp = list_entry(e, struct list_item, elem);
+        //     printf("%d ", temp->data);
+        // }
+        // printf("\n");
         return 0;
     }
     return -1; //can't find
@@ -640,13 +653,13 @@ struct list* find_list(char* buffer){
     while(list_arr_temp != NULL){//find list named buffer
         if(strcmp(list_arr_temp->list_name, buffer) == 0){
             list_found = true;
+
             break;
         }
         list_arr_temp = list_arr_temp->next;
     }
 
     if(list_found){
-        printf("found list %p\n", list_arr_temp->list_);
         return list_arr_temp->list_;
     }
         
